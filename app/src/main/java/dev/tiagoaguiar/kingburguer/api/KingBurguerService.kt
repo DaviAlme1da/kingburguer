@@ -4,6 +4,7 @@ import dev.tiagoaguiar.kingburguer.BuildConfig
 import dev.tiagoaguiar.kingburguer.data.LoginRequest
 import dev.tiagoaguiar.kingburguer.data.LoginResponse
 import dev.tiagoaguiar.kingburguer.data.RefreshTokenRequest
+import dev.tiagoaguiar.kingburguer.data.UserCreateResponse
 import dev.tiagoaguiar.kingburguer.data.UserRequest
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -22,7 +23,7 @@ interface KingBurguerService {
     suspend fun postUser(
         @Body userRequest: UserRequest,
         @Header("x-secret-key") secretKey: String = BuildConfig.X_SECRET_KEY,
-    ): Response<ResponseBody>
+    ): Response<UserCreateResponse>
 
     @POST("auth/login")
     suspend fun login(
@@ -34,7 +35,7 @@ interface KingBurguerService {
     suspend fun refreshToken(
         @Body refreshTokenRequest: RefreshTokenRequest,
         @Header("Authorization") token: String,
-    ): Response<ResponseBody>
+    ): Response<LoginResponse>
 
 
     companion object {

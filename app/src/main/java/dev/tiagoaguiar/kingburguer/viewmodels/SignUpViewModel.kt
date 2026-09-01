@@ -15,6 +15,7 @@ import dev.tiagoaguiar.kingburguer.compose.login.LoginUiState
 import dev.tiagoaguiar.kingburguer.compose.signup.FieldState
 import dev.tiagoaguiar.kingburguer.compose.signup.FormState
 import dev.tiagoaguiar.kingburguer.compose.signup.SignUpUiState
+import dev.tiagoaguiar.kingburguer.data.ApiResult
 import dev.tiagoaguiar.kingburguer.data.KingBurguerLocalStorage
 import dev.tiagoaguiar.kingburguer.data.KingBurguerRepository
 import dev.tiagoaguiar.kingburguer.data.UserCreateResponse
@@ -187,15 +188,11 @@ class SignUpViewModel(
                 Log.i("Teste", "result: $result")
 
                 when(result){
-                    is UserCreateResponse.Success -> {
+                    is ApiResult.Success -> {
                         _uiState.update { it.copy(isLoading = false, goToLogin = true) }
                     }
-                    is UserCreateResponse.ErrorAuth -> {
-                        _uiState.update { it.copy(isLoading = false, error = result.detail.message) }
-
-                    }
-                    is UserCreateResponse.Error -> {
-                        _uiState.update { it.copy(isLoading = false, error = result.detail) }
+                    is ApiResult.Error -> {
+                        _uiState.update { it.copy(isLoading = false, error = result.message) }
                     }
                 }
 

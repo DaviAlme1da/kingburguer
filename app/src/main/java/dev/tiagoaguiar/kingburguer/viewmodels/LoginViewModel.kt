@@ -13,6 +13,7 @@ import dev.tiagoaguiar.kingburguer.api.KingBurguerService
 import dev.tiagoaguiar.kingburguer.compose.login.FormState
 import dev.tiagoaguiar.kingburguer.compose.login.LoginUiState
 import dev.tiagoaguiar.kingburguer.compose.signup.FieldState
+import dev.tiagoaguiar.kingburguer.data.ApiResult
 import dev.tiagoaguiar.kingburguer.data.KingBurguerLocalStorage
 import dev.tiagoaguiar.kingburguer.data.KingBurguerRepository
 import dev.tiagoaguiar.kingburguer.data.LoginRequest
@@ -93,22 +94,18 @@ class LoginViewModel(
                 Log.i("Teste", "result: $result")
 
                 when (result) {
-                    is LoginResponse.Success -> {
+                    is ApiResult.Success -> {
                         _uiState.update { it.copy(isLoading = false, goToHome = true) }
                     }
 
-                    is LoginResponse.ErrorAuth -> {
+                    is ApiResult.Error -> {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                error = result.detail.message
+                                error = result.message
                             )
                         }
 
-                    }
-
-                    is LoginResponse.Error -> {
-                        _uiState.update { it.copy(isLoading = false, error = result.detail) }
                     }
                 }
 
