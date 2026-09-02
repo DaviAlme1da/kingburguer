@@ -19,13 +19,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -40,25 +42,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import dev.tiagoaguiar.kingburguer.R
 import dev.tiagoaguiar.kingburguer.common.currency
 import dev.tiagoaguiar.kingburguer.data.CategoryResponse
 import dev.tiagoaguiar.kingburguer.ui.theme.KingBurguerTheme
 import dev.tiagoaguiar.kingburguer.ui.theme.Orange600
 import dev.tiagoaguiar.kingburguer.viewmodels.HomeViewModel
+import dev.tiagoaguiar.kingburguer.viewmodels.SplashViewModel
 
-data class Product(
-    val id: Int,
-    val name: String,
-    @DrawableRes val picture: Int = R.drawable.example,
-    val price: Double = 19.9
-)
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.factory),
-    onProductClicked: (Int) -> Unit,
+    onProductClicked: (Int) -> Unit
 ) {
     val state = viewModel.uiState.collectAsState().value
     HomeScreen(modifier, state, onProductClicked)
@@ -66,20 +64,18 @@ fun HomeScreen(
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     state: HomeUiState,
     onProductClicked: (Int) -> Unit
 ) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         when {
             state.isLoading -> {
                 CircularProgressIndicator()
             }
-
             state.error != null -> {
                 Text(state.error, color = MaterialTheme.colorScheme.primary)
             }
-
             else -> {
                 HomeScreen(modifier, state.categories, onProductClicked)
             }
@@ -94,7 +90,6 @@ fun HomeScreen(
     categories: List<CategoryResponse>,
     onProductClicked: (Int) -> Unit
 ) {
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -108,11 +103,12 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .height(230.dp)
                     .background(Color.Blue),
+
                 painter = painterResource(R.drawable.highlight),
                 contentDescription = null,
                 contentScale = ContentScale.Crop
-
             )
+
             OutlinedButton(
                 onClick = {},
                 modifier = Modifier
@@ -125,13 +121,13 @@ fun HomeScreen(
                 )
             ) {
                 Text(
-                    color = Color.White,
+                    color =  Color.White,
                     text = stringResource(R.string.get_coupon)
                 )
             }
         }
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             itemsIndexed(categories) { index, cat ->
                 val topPadding = if (index == 0) 20.dp else 0.dp
@@ -141,8 +137,9 @@ fun HomeScreen(
                         .padding(start = 12.dp, bottom = 12.dp, top = topPadding),
                     text = cat.name,
                     color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium,
                 )
+
                 CompositionLocalProvider(
                     LocalOverscrollConfiguration provides null
                 ) {
@@ -161,7 +158,9 @@ fun HomeScreen(
                                     .widthIn(max = 160.dp)
                                     .padding(start = startPadding, end = endPadding)
                             ) {
-                                Image(
+                                AsyncImage(
+                                    model = product.pictureUrl,
+                                    placeholder = painterResource(R.drawable.logo),
                                     modifier = Modifier
                                         .size(140.dp, 180.dp)
                                         .border(
@@ -171,8 +170,7 @@ fun HomeScreen(
                                         .clickable {
                                             onProductClicked(product.id)
                                         },
-                                    painter = painterResource(R.drawable.logo_splash),
-                                    contentDescription = product.name,
+                                    contentDescription = product.name
                                 )
                                 Text(
                                     modifier = Modifier.fillMaxWidth(),
@@ -181,6 +179,7 @@ fun HomeScreen(
                                     textAlign = TextAlign.Center,
                                     style = MaterialTheme.typography.bodyMedium
                                 )
+
                                 Text(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -194,36 +193,32 @@ fun HomeScreen(
                                     textAlign = TextAlign.Center,
                                     style = MaterialTheme.typography.bodyMedium
                                 )
-
-
                             }
+
                         }
                     }
+
                 }
-
-
             }
         }
     }
 }
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LightHomeLoadingScreenPreview() {
     KingBurguerTheme(dynamicColor = false, darkTheme = false) {
         val state = HomeUiState(isLoading = true)
-        HomeScreen(state = state) {}
+        HomeScreen(Modifier, state) {}
     }
 }
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DarkHomeErrorScreenPreview() {
     KingBurguerTheme(dynamicColor = false, darkTheme = true) {
-        val state = HomeUiState(error = error("Error de teste"))
-        HomeScreen(state = state) {}
+        val state = HomeUiState(error = "Erro de teste")
+        HomeScreen(Modifier, state) {}
     }
 }
 
@@ -232,6 +227,6 @@ fun DarkHomeErrorScreenPreview() {
 fun DarkHomeEmptyScreenPreview() {
     KingBurguerTheme(dynamicColor = false, darkTheme = true) {
         val state = HomeUiState(categories = emptyList())
-        HomeScreen(state = state) {}
+        HomeScreen(Modifier, state) {}
     }
 }

@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.androidx.material)
     implementation(libs.androidx.navigation)
     implementation(libs.androidx.material.icons)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network)
 
     // http
     implementation(libs.retrofit2)
