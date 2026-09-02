@@ -17,6 +17,4 @@ data class LoginResponse(
     val expiresSeconds: Double,
 )
 
-data class Error(val detail: String)
 
-data class ErrorAuth(val detail: ErrorDetail)

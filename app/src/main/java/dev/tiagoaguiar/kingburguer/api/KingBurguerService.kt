@@ -1,6 +1,7 @@
 package dev.tiagoaguiar.kingburguer.api
 
 import dev.tiagoaguiar.kingburguer.BuildConfig
+import dev.tiagoaguiar.kingburguer.data.FeedResponse
 import dev.tiagoaguiar.kingburguer.data.LoginRequest
 import dev.tiagoaguiar.kingburguer.data.LoginResponse
 import dev.tiagoaguiar.kingburguer.data.RefreshTokenRequest
@@ -13,6 +14,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -36,6 +38,11 @@ interface KingBurguerService {
         @Body refreshTokenRequest: RefreshTokenRequest,
         @Header("Authorization") token: String,
     ): Response<LoginResponse>
+
+    @GET("feed")
+    suspend fun fetchFeed(
+        @Header("Authorization") token: String,
+    ): Response<FeedResponse>
 
 
     companion object {
