@@ -47,4 +47,5 @@
     <string name="prop_email">Email</string>
     <string name="prop_document">Documento\n</string>
     <string name="prop_birthday">Data de Nacimento</string>
+    <string name="coupon_generated">Cupom Gerado: $s.\nVocê também pode consultar seus cupons na aba Cupons</string>
 </resources>

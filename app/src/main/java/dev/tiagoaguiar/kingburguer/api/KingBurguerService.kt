@@ -1,15 +1,17 @@
 package dev.tiagoaguiar.kingburguer.api
 
+import com.google.gson.GsonBuilder
 import dev.tiagoaguiar.kingburguer.BuildConfig
+import dev.tiagoaguiar.kingburguer.data.CouponResponse
 import dev.tiagoaguiar.kingburguer.data.FeedResponse
 import dev.tiagoaguiar.kingburguer.data.LoginRequest
 import dev.tiagoaguiar.kingburguer.data.LoginResponse
 import dev.tiagoaguiar.kingburguer.data.ProductDetailsResponse
+import dev.tiagoaguiar.kingburguer.data.ProfileResponse
 import dev.tiagoaguiar.kingburguer.data.RefreshTokenRequest
 import dev.tiagoaguiar.kingburguer.data.UserCreateResponse
 import dev.tiagoaguiar.kingburguer.data.UserRequest
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -52,6 +54,17 @@ interface KingBurguerService {
         @Path("id") productId: Int,
     ): Response<ProductDetailsResponse>
 
+    @GET("users/me")
+    suspend fun fetchMe(
+        @Header("Authorization") token: String,
+    ): Response<ProfileResponse>
+
+    @POST("products/{id}/coupon")
+    suspend fun createCoupon(
+        @Header("Authorization") token: String,
+        @Path("id") productId: Int,
+    ): Response<CouponResponse>
+
 
     companion object {
 
@@ -66,10 +79,14 @@ interface KingBurguerService {
                 .addInterceptor(logger)
                 .build()
 
+            val gson = GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create()
+
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(clientOk)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
                 .create(KingBurguerService::class.java)
         }

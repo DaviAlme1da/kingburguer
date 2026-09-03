@@ -215,7 +215,10 @@ fun MainContentScreen(
                 modifier = Modifier.padding(
                     top = contentPadding.calculateTopPadding(),
                     bottom = contentPadding.calculateBottomPadding()
-                )
+                ),
+                onCouponGenerated = {
+                    navController.popBackStack()
+                }
             )
         }
     }

@@ -30,6 +30,10 @@ class ProductViewModel(
         start()
     }
 
+    fun reset(){
+        _uiState.value = ProductUiState()
+    }
+
     fun start() {
         _uiState.update {
             it.copy(isLoading = true)
@@ -43,6 +47,24 @@ class ProductViewModel(
 
                 is ApiResult.Success -> {
                     _uiState.update { it.copy(isLoading = false, productDetail = response.data) }
+                }
+            }
+        }
+    }
+
+    fun createCoupon(){
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            val response = repository.createCoupon(productId)
+            when (response) {
+                is ApiResult.Error -> {
+                    _uiState.update { it.copy(isLoading = false, error = response.message) }
+                }
+
+                is ApiResult.Success -> {
+                    _uiState.update { it.copy(isLoading = false, coupon = response.data) }
                 }
             }
         }
