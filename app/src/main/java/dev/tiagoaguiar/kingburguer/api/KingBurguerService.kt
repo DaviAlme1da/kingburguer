@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import dev.tiagoaguiar.kingburguer.BuildConfig
 import dev.tiagoaguiar.kingburguer.data.CouponResponse
 import dev.tiagoaguiar.kingburguer.data.FeedResponse
+import dev.tiagoaguiar.kingburguer.data.HighlightProductResponse
 import dev.tiagoaguiar.kingburguer.data.LoginRequest
 import dev.tiagoaguiar.kingburguer.data.LoginResponse
 import dev.tiagoaguiar.kingburguer.data.ProductDetailsResponse
@@ -65,6 +66,10 @@ interface KingBurguerService {
         @Path("id") productId: Int,
     ): Response<CouponResponse>
 
+    @GET("highlight")
+    suspend fun fetchHighlight(
+        @Header("Authorization") token: String,
+    ): Response<HighlightProductResponse>
 
     companion object {
 
